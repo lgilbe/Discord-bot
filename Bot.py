@@ -1,5 +1,7 @@
-# Import discord api
+# https://discordpy.readthedocs.io/en/latest/index.html
+# Imports
 import discord
+import random
 
 # Getting bot token from local.
 with open("bot-info.txt") as FO:
@@ -22,9 +24,17 @@ async def on_ready():
     game = discord.Game("Current members: " + str(client.get_guild(209539893708193793).member_count))
     await client.change_presence(status=discord.Status.online, activity=game)
 
-# On message event, log event.
+# On message events
 @client.event
 async def on_message(message):
+    if message.content.lower() == "!roll":
+        num = random.randint(1,101)
+        await message.channel.send("> " + f'{message.author}' + " rolled " + str(num))
+
+    if message.content.lower() == "!ping":
+        ping = str(round(client.latency*100))
+        await message.channel.send("> Current latency is " + ping)
+        
     print("In " + f'{message.channel}' + ", " +
      f'{message.author}' + " said: " + f'{message.content}')
 
