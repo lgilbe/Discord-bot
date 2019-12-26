@@ -1,6 +1,8 @@
 # https://discordpy.readthedocs.io/en/latest/index.html
 # Imports
 import discord
+from discord.ext import commands
+from discord.utils import get
 import random
 
 # Getting bot token from local.
@@ -38,11 +40,16 @@ async def on_message(message):
     print("In " + f'{message.channel}' + ", " +
      f'{message.author}' + " said: " + f'{message.content}')
 
-# On join event, update our user count.
+# On join event, update our user count and assign roles.
 @client.event
 async def on_member_join(member):
     game = discord.Game("Current members: " + str(client.get_guild(209539893708193793).member_count))
     await client.change_presence(status=discord.Status.online, activity=game)
+
+    #Apply our default roles
+    defaultID = 647903075763224598
+    defaultRole = get(client.guilds[0].roles, id=defaultID)
+    await member.add_roles(defaultRole)
 
 # On leave event, update our user count.
 @client.event
