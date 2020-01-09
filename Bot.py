@@ -62,6 +62,7 @@ async def on_message(message):
 
         await message.channel.send("> Added default roles to " + str(count) + " members")
 
+    #Log user messages.
     print("In " + f'{message.channel}' + ", " +
      f'{message.author}' + " said: " + f'{message.content}')
 
