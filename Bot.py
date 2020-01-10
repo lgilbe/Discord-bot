@@ -36,18 +36,18 @@ async def on_message(message):
             num = random.randint(0,1)
             if num == 0:
                 num = random.randint(0,11)
-                await message.channel.send("> " + f'{message.author}' + " rolled " + str(num))
+                await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
             else:
                 num = random.randint(0,101)
-                await message.channel.send("> " + f'{message.author}' + " rolled " + str(num))
+                await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
         else:
             print(message.author)
             num = random.randint(0,101)
-            await message.channel.send("> " + f'{message.author}' + " rolled " + str(num))
+            await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
 
     # Allows you to test bot ping.
     if message.content.lower() == "!ping":
-        ping = str(round(client.latency*100))
+        ping = str(round(client.latency*1000))
         await message.channel.send("> Current latency is " + ping)
         
     #Adds our default roles to users if they don't have it.
