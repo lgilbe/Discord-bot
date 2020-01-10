@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 import random
+import time
 
 # Getting bot token from local.
 with open("bot-info.txt") as FO:
@@ -59,8 +60,10 @@ async def on_message(message):
             if defaultRole not in member.roles:
                 await member.add_roles(defaultRole)
                 count = count + 1
-
-        await message.channel.send("> Added default roles to " + str(count) + " members")
+        if count == 0:
+            await message.channel.send("> No users needed a role.")
+        else:
+            await message.channel.send("> Added default roles to " + str(count) + " members")
 
     #Log user messages.
     print("In " + f'{message.channel}' + ", " +
