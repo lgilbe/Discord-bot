@@ -6,6 +6,10 @@ from discord.utils import get
 import random
 import time
 
+#Functions we need.
+def hasInt(inputString):
+  return any(char.isdigit() for char in inputString)
+
 # Getting bot token from local.
 with open("bot-info.txt") as FO:
     discordToken = FO.readline()
@@ -31,18 +35,15 @@ async def on_ready():
 async def on_message(message):
 
     # Will roll between 0,100 and print your roll.
-    if message.content.lower() == "!roll":
-        if f'{message.author}'== "AkChaseKid#0354":
-            num = random.randint(0,1)
-            if num == 0:
-                num = random.randint(0,11)
-                await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
-            else:
-                num = random.randint(0,101)
-                await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
+    if message.content.lower()[0:5] == "!roll":
+        if hasInt(message.content):
+            try:
+                num = random.randint(0,int(message.content.split()[1]))
+            except ValueError:
+                print("Nothing to split.")
+            await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
         else:
-            print(message.author)
-            num = random.randint(0,101)
+            num = random.randint(0,100)
             await message.channel.send("> :game_die:  " + f'{message.author}' + " rolled " + str(num))
 
     # Allows you to test bot ping.
@@ -80,11 +81,16 @@ async def on_member_join(member):
     defaultRole = get(client.guilds[0].roles, id=defaultID)
     await member.add_roles(defaultRole)
 
+
 # On leave event, update our user count.
 @client.event
 async def on_member_remove(member):
     game = discord.Game("Current members: " + str(client.get_guild(209539893708193793).member_count))
     await client.change_presence(status=discord.Status.online, activity=game)
+
+
+
+
 
 # Run our client with token grabbed from local
 client.run(discordToken)
