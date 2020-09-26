@@ -38,9 +38,6 @@ async def on_message(message):
         command = args[0]
         del(args[0])
 
-        await message.channel.send("Command: " + command)
-        await message.channel.send("Args: " + str(args))
-
         # Begin commands
 
         if command == "roll":
@@ -80,8 +77,10 @@ async def on_member_remove(member):
 
 # Error handler - todo
 @client.event
-async def on_error(event):
-    print(event)
+async def on_error(error, args):
+    print(error)
+    print(args)
+    print("An error occurred. Please handle this.")
 
 # Run our client with token grabbed from local
 client.run(discordToken)
