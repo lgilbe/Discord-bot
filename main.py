@@ -1,8 +1,11 @@
 # https://discordpy.readthedocs.io/en/latest/index.html
+
 # Imports
 import discord
 from on_message import *
-from discord.utils import get
+from on_ready import *
+from on_member_join import *
+from on_error import *
 
 # Getting bot token from local.
 with open("bot-info.txt") as FO:
@@ -14,16 +17,12 @@ client = discord.Client()
 # Client ready event - display stats
 @client.event
 async def on_ready():
-    print(f'{client.user}' + ' has connected to Discord.')
-    print("Current latency is: " + f'{client.latency}')
 
-    # Print our connected Guilds
-    for guild in client.guilds:
-        print('Connected to: ' + guild.name)
+    # Print client info
+    await printClientInfo(client)
 
     # Change our status.
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(
-        "Current members: " + str(client.get_guild(209539893708193793).member_count)))
+    await updateClientStatus(client)
 
 # On message handler
 @client.event
@@ -39,10 +38,9 @@ async def on_message(message):
         del(args[0])
 
         # Begin commands
-
         if command == "roll":
             await roll(args, message)
-        if command == "ping":
+        elif command == "ping":
             await ping(round(client.latency*1000), message)
 
     # Easter egg if user doesn't use correct channel to fish
@@ -55,32 +53,23 @@ async def on_message(message):
 async def on_member_join(member):
 
     # Update user count
-    game = discord.Game("Current members: " + str(client.get_guild(209539893708193793).member_count))
-    await client.change_presence(status=discord.Status.online, activity=game)
+    updateUserCount(client)
 
-    # Get ids and convert them to role objects
-    defaultID = 647903075763224598
-    memberId = 223638410135339010
-    defaultRole = get(client.guilds[0].roles, id=defaultID)
-    memberRole = get(client.guilds[0].roles, id=memberId)
-
-    # Add roles to new user
-    await member.add_roles(defaultRole, reason="Adding default role on join!")
-    await member.add_roles(memberRole, reason="Adding member role on join!")
+    # Give new member all default roles
+    addDefaultRoles(client, member)
 
 
 # On leave handler
 @client.event
 async def on_member_remove(member):
-    game = discord.Game("Current members: " + str(client.get_guild(209539893708193793).member_count))
-    await client.change_presence(status=discord.Status.online, activity=game)
 
-# Error handler - todo
+    # Update user count
+    updateUserCount(client)
+
+# Error handler - print and log errors.
 @client.event
-async def on_error(error, args):
-    print(error)
-    print(args)
-    print("An error occurred. Please handle this.")
+async def on_error(event, *args, **kwargs):
+    printError(event, *args, **kwargs)
 
 # Run our client with token grabbed from local
 client.run(discordToken)
